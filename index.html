@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Tailwind css -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Lucide icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <title>Color picker</title>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-br from-purple-200 via-purple-300 to-purple-400 flex items-center justify-center p-4 font-mono ease-[cubic-bezier(0.61,1,0.88,1)] transition-colors"
+  >
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full">
+      <input
+        type="file"
+        id="upload-img-input"
+        accept="image/*"
+        class="hidden"
+      />
+
+      <div class="relative flex gap-2">
+        <div class="h-60 flex-1">
+          <canvas id="preview-img" class="w-full h-full bg-gray-200"></canvas>
+        </div>
+
+        <div>
+          <div class="h-min mb-4">
+            <label
+              for="link-text"
+              class="block mb-1 text-sm font-medium text-gray-500"
+              >Paste here</label
+            >
+            <div class="flex gap-2">
+              <input
+                type="text"
+                id="link-text"
+                aria-describedby="helper-text-explanation"
+                class="bg-white border-2 border-gray-400 rounded-xl py-2 px-3 text-gray-700 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                placeholder="https://"
+                autocomplete="off"
+              />
+              <button
+                id="clear-link-btn"
+                class="inline-flex items-center justify-center rounded-xl w-8 border-2 border-gray-200 bg-transparent text-primary hover:bg-gray-100 hover:text-black border-gray-200 cursor-pointer"
+              >
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="block mb-0.5 text-sm font-medium text-gray-500">
+              Color picker
+            </div>
+            <div class="flex justify-between">
+              <div>
+                <p>Hex</p>
+                <div
+                  id="hex-color"
+                  class="copyable-color-display bg-gray-200 px-2 py-1 rounded-sm cursor-pointer hover:bg-gray-100"
+                >
+                  #000000
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <div class="text-center">
+                  <p>R</p>
+                  <div
+                    id="r-color"
+                    class="copyable-color-display bg-gray-200 px-2 py-1 rounded-sm cursor-pointer hover:bg-gray-100 min-w-12"
+                  >
+                    255
+                  </div>
+                </div>
+                <div class="text-center">
+                  <p>G</p>
+                  <div
+                    id="g-color"
+                    class="copyable-color-display bg-gray-200 px-2 py-1 rounded-sm cursor-pointer hover:bg-gray-100 min-w-12"
+                  >
+                    255
+                  </div>
+                </div>
+                <div class="text-center">
+                  <p>B</p>
+                  <div
+                    id="b-color"
+                    class="copyable-color-display bg-gray-200 px-2 py-1 rounded-sm cursor-pointer hover:bg-gray-100 min-w-12"
+                  >
+                    255
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="theme-container">
+            <div class="block mb-0.5 text-sm font-medium text-gray-500">
+              Theme color
+            </div>
+            <div class="flex gap-2">
+              <div data-popover-target="popover-1" class="text-center">
+                <div
+                  class="theme-btn bg-gray-200 size-12 rounded-full cursor-pointer hover:bg-gray-100"
+                ></div>
+
+                <div
+                  data-popover
+                  id="popover-1"
+                  role="tooltip"
+                  class="absolute z-10 invisible inline-block w-45 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs opacity-0"
+                >
+                  <div
+                    class="content text-left p-2 divide-y divide-gray-200 cursor-pointer"
+                  >
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="rgb"
+                    >
+                      RGB (255, 255, 0)
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="hex"
+                    >
+                      HEX #000
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="hsl"
+                    >
+                      HSL (0, 0%, 100%)
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="oklch"
+                    >
+                      OKLCH (0 0 0)
+                    </div>
+                  </div>
+                  <div data-popper-arrow></div>
+                </div>
+              </div>
+              <div data-popover-target="popover-2" class="text-center">
+                <div
+                  class="theme-btn bg-gray-200 size-12 rounded-full cursor-pointer hover:bg-gray-100"
+                ></div>
+
+                <div
+                  data-popover
+                  id="popover-2"
+                  role="tooltip"
+                  class="absolute z-10 invisible inline-block w-45 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs opacity-0"
+                >
+                  <div
+                    class="content text-left p-2 divide-y divide-gray-200 cursor-pointer"
+                  >
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="rgb"
+                    >
+                      RGB (255, 255, 0)
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="hex"
+                    >
+                      HEX #000
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="hsl"
+                    >
+                      HSL (0, 0%, 100%)
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="oklch"
+                    >
+                      OKLCH (0 0 0)
+                    </div>
+                  </div>
+                  <div data-popper-arrow></div>
+                </div>
+              </div>
+              <div data-popover-target="popover-3" class="text-center">
+                <div
+                  class="theme-btn bg-gray-200 size-12 rounded-full cursor-pointer hover:bg-gray-100"
+                ></div>
+
+                <div
+                  data-popover
+                  id="popover-3"
+                  role="tooltip"
+                  class="absolute z-10 invisible inline-block w-45 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs opacity-0"
+                >
+                  <div
+                    class="content text-left p-2 divide-y divide-gray-200 cursor-pointer"
+                  >
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="rgb"
+                    >
+                      RGB (255, 255, 0)
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="hex"
+                    >
+                      HEX #000
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="hsl"
+                    >
+                      HSL (0, 0%, 100%)
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="oklch"
+                    >
+                      OKLCH (0 0 0)
+                    </div>
+                  </div>
+                  <div data-popper-arrow></div>
+                </div>
+              </div>
+              <div data-popover-target="popover-4" class="text-center">
+                <div
+                  class="theme-btn bg-gray-200 size-12 rounded-full cursor-pointer hover:bg-gray-100"
+                ></div>
+
+                <div
+                  data-popover
+                  id="popover-4"
+                  role="tooltip"
+                  class="absolute z-10 invisible inline-block w-45 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-xs opacity-0"
+                >
+                  <div
+                    class="content text-left p-2 divide-y divide-gray-200 cursor-pointer"
+                  >
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="rgb"
+                    >
+                      RGB (255, 255, 0)
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="hex"
+                    >
+                      HEX #000
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="hsl"
+                    >
+                      HSL (0, 0%, 100%)
+                    </div>
+                    <div
+                      class="p-1 hover:bg-gray-100 uppercase"
+                      data-color-type="oklch"
+                    >
+                      OKLCH (0 0 0)
+                    </div>
+                  </div>
+                  <div data-popper-arrow></div>
+                </div>
+              </div>
+
+              <button
+                id="refresh-theme-btn"
+                class="hover:bg-gray-100 flex items-center justify-center rounded-full size-12"
+              >
+                <i data-lucide="refresh-cw" class="size-5 cursor-pointer"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mt-2">
+        <label
+          id="upload-img-label"
+          for="upload-img-input"
+          class="flex-1 rounded-full px-6 py-5 bg-gray-50 hover:bg-gray-100 border-gray-200 cursor-pointer flex items-center justify-center mx-auto bg-gray-200/50"
+        >
+          <i data-lucide="cloud-upload" class="w-4 h-4 mr-2"></i>
+          Upload image
+        </label>
+        <button
+          id="clear-img-btn"
+          class="flex-1 rounded-full px-6 py-5 bg-blue-500 hover:bg-gray-100 hover:text-black border-gray-200 cursor-pointer flex items-center justify-center mx-auto text-white"
+        >
+          <i data-lucide="x" class="w-4 h-4 mr-2"></i>
+          Clear image
+        </button>
+      </div>
+    </div>
+    <div
+      id="toast-bottom-right"
+      class="fixed flex items-center p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow-sm right-5 bottom-5 opacity-0 translate-y-5 transition-all duration-500"
+      role="alert"
+    >
+      <div class="text-sm font-normal flex gap-2 items-center"></div>
+    </div>
+
+    <a
+      href="https://github.com/Ox09"
+      class="fixed left-5 bottom-0 text-white cursor-pointer"
+      >Made by
+      <span class="">Ox09</span>
+    </a>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="./k-means-clustering.js"></script>
+  <script>
+    // Initialize lucide
+    try {
+      lucide.createIcons();
+    } catch (error) {
+      console.log(error); //Catch error if user has no internet
+    }
+
+    // Access worker file
+    const worker = new Worker("worker.js");
+
+    // Access elements from dom
+    const DOM = {
+      inputFile: document.getElementById("upload-img-input"),
+      inputLink: document.getElementById("link-text"),
+      uploadImgLabel: document.getElementById("upload-img-label"),
+      clearImgBtn: document.getElementById("clear-img-btn"),
+      clearLinkBtn: document.getElementById("clear-link-btn"),
+      toastNotification: document.getElementById("toast-bottom-right"),
+      hexColorDisplay: document.getElementById("hex-color"),
+      rColorDisplay: document.getElementById("r-color"),
+      gColorDisplay: document.getElementById("g-color"),
+      bColorDisplay: document.getElementById("b-color"),
+      themeContainer: document.getElementById("theme-container"),
+      refreshThemeBtn: document.getElementById("refresh-theme-btn"),
+      themePopovers: document.querySelectorAll("div[data-popover]"),
+      themeBtns: document.querySelectorAll(".theme-btn"),
+      canvas: document.getElementById("preview-img"),
+    };
+    const ctx = DOM.canvas.getContext("2d");
+    let imgPixeletedPreview = null;
+    let isImageProcessed = "idle"; // "idle" | "done"
+    let timerID = null;
+
+    // Show toast notification
+    function showToast(msg, duartion) {
+      if (timerID) {
+        clearTimeout(timerID);
+      }
+      DOM.toastNotification.classList.remove("opacity-0", "translate-y-5");
+      DOM.toastNotification.classList.add("opacity-100", "translate-y-0");
+      DOM.toastNotification.firstElementChild.innerHTML = msg;
+      lucide.createIcons();
+
+      if (duartion > 0) {
+        timerID = setTimeout(() => {
+          hideToast();
+        }, duartion);
+      }
+    }
+
+    // Hide toast notification
+    function hideToast() {
+      DOM.toastNotification.classList.remove("opacity-100", "translate-y-0");
+      DOM.toastNotification.classList.add("opacity-0", "translate-y-5");
+    }
+
+    // Get colors in rgb, hex, hsl & oklch format
+    function getColors(data) {
+      const [r, g, b] = data;
+      const rgb = `rgb(${r}, ${g}, ${b})`;
+      const rgba = `rgba(${r}, ${g}, ${b} / ${data[3] / 255})`;
+      const hex =
+        "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+
+      // Convert RGB to HSL
+      const rNorm = r / 255,
+        gNorm = g / 255,
+        bNorm = b / 255;
+      const max = Math.max(rNorm, gNorm, bNorm),
+        min = Math.min(rNorm, gNorm, bNorm);
+      let h,
+        s,
+        l = (max + min) / 2;
+
+      if (max === min) {
+        h = s = 0; // achromatic
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case rNorm:
+            h = (gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0);
+            break;
+          case gNorm:
+            h = (bNorm - rNorm) / d + 2;
+            break;
+          case bNorm:
+            h = (rNorm - gNorm) / d + 4;
+            break;
+        }
+        h /= 6;
+      }
+
+      const hsl = `hsl(${Math.round(h * 360)}, ${Math.round(
+        s * 100
+      )}%, ${Math.round(l * 100)}%)`;
+
+      // OKLCH (requires CSS parser for real conversion, this is fallback)
+      const oklch = `oklch(0.7 0.2 ${Math.round(h * 360)}deg)`; // mocked from H for fallback preview
+
+      return {
+        rgb,
+        rgba,
+        hex,
+        hsl,
+        oklch,
+      };
+    }
+
+    // Copy to clipboard
+    async function copyToClipboard(color) {
+      try {
+        await navigator.clipboard.writeText(color);
+        const previewColor = document.createElement("div");
+        previewColor.style.width = "10px";
+        previewColor.style.height = "10px";
+        previewColor.style.background = color;
+        previewColor.style.display = "inline-flex";
+        showToast(
+          `
+          ${previewColor.outerHTML}
+          ${color} copied!
+          `,
+          3000
+        );
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+
+    // Attach event delegation for popover content clicks
+    function attachPopoverClickDelegation() {
+      DOM.themeContainer.addEventListener("click", (event) => {
+        const clickedElement = event.target.closest("[data-color-type]");
+        if (clickedElement) {
+          const colorValue = clickedElement.textContent.trim();
+          let colorToCopy = colorValue;
+
+          if (colorValue.startsWith("RGB ")) {
+            colorToCopy = colorValue.replace("RGB ", "");
+          } else if (colorValue.startsWith("HEX ")) {
+            colorToCopy = colorValue.replace("HEX ", "");
+          } else if (colorValue.startsWith("HSL ")) {
+            colorToCopy = colorValue.replace("HSL ", "");
+          } else if (colorValue.startsWith("OKLCH ")) {
+            colorToCopy = colorValue.replace("OKLCH ", "");
+          }
+
+          copyToClipboard(colorToCopy);
+        }
+      });
+    }
+
+    // Update the display of theme colors
+    function updateThemeColorsDisplay(colorsSubset) {
+      DOM.themePopovers.forEach((item, i) => {
+        const content = item.querySelector(".content");
+        const rgbElement = content.querySelector('[data-color-type="rgb"]');
+        const hexElement = content.querySelector('[data-color-type="hex"]');
+        const hslElement = content.querySelector('[data-color-type="hsl"]');
+        const oklchElement = content.querySelector('[data-color-type="oklch"]');
+
+        if (colorsSubset[i]) {
+          const { rgb, hex, oklch, hsl } = getColors(colorsSubset[i]);
+
+          rgbElement.textContent = rgb;
+          hexElement.textContent = `HEX ${hex}`;
+          hslElement.textContent = hsl;
+          oklchElement.textContent = oklch;
+
+          DOM.themeBtns[i].classList.remove("animate-pulse");
+          DOM.themeBtns[i].style.background = rgb;
+        }
+      });
+    }
+
+    // Handle mouse move
+    function handleMouseMove(e) {
+      if (isImageProcessed === "idle" && isImageProcessed !== "done") return;
+      const dpr = window.devicePixelRatio || 1;
+      const bounding = DOM.canvas.getBoundingClientRect();
+      const x = Math.floor((e.clientX - bounding.left) * dpr);
+      const y = Math.floor((e.clientY - bounding.top) * dpr);
+      const pixel = ctx.getImageData(x, y, dpr, dpr);
+      const data = pixel.data;
+      const { rgb, rgba, hex } = getColors(data);
+
+      [
+        DOM.hexColorDisplay,
+        DOM.rColorDisplay,
+        DOM.gColorDisplay,
+        DOM.bColorDisplay,
+      ].forEach((display, i) => {
+        if (display.getAttribute("id") === "hex-color") {
+          display.textContent = hex;
+        } else {
+          display.textContent = String(data[i]);
+        }
+        display.style.backgroundColor = rgb || hex;
+        display.style.color = "white";
+      });
+
+      hexColor = hex;
+      rgbColor = rgb;
+
+      pixeletedPreviewImg(e, x, y);
+    }
+
+    // Create pixeleted preview image
+    function pixeletedPreviewImg(e, x, y) {
+      const previewWidth = 50,
+        previewHeight = 50;
+
+      if (!imgPixeletedPreview) {
+        imgPixeletedPreview = document.createElement("canvas");
+        imgPixeletedPreview.width = previewWidth;
+        imgPixeletedPreview.height = previewHeight;
+        imgPixeletedPreview.style.position = "absolute";
+        imgPixeletedPreview.style.border = "3px solid #FBFBFB";
+        imgPixeletedPreview.style.borderRadius = "10px";
+        imgPixeletedPreview.style.zIndex = 2;
+        document.body.appendChild(imgPixeletedPreview);
+      }
+
+      const ctx1 = imgPixeletedPreview.getContext("2d");
+      ctx1.imageSmoothingEnabled = true;
+
+      // Make the mouse at the center of the preview
+      imgPixeletedPreview.style.position = "absolute";
+      imgPixeletedPreview.style.top = e.clientY + 10 + "px";
+      imgPixeletedPreview.style.left = e.clientX + 10 + "px";
+      imgPixeletedPreview.style.transition = "top 0.05s ease, left 0.05s ease";
+      ctx1.clearRect(0, 0, previewWidth, previewHeight);
+      ctx1.drawImage(
+        DOM.canvas,
+        Math.max(0, x - 5),
+        Math.max(0, y - 5),
+        10,
+        10,
+        0,
+        0,
+        previewWidth,
+        previewHeight
+      );
+    }
+
+    // Receive and adjust the image into the canvas
+    async function renderImage(imgSrc) {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = imgSrc;
+
+      showToast(
+        `
+            <i data-lucide="Loader" class="w-4 h-4"></i>
+            <p>Image processing...</p>
+            `
+      );
+
+      img.onload = () => {
+        const dpr = window.devicePixelRatio || 1;
+        const cssWidth = DOM.canvas.clientWidth;
+        const cssHeight = DOM.canvas.clientHeight;
+        const totalThemeBtns = DOM.themeBtns.length;
+        const colorRotation = 3; // Times
+
+        DOM.canvas.width = cssWidth * dpr;
+        DOM.canvas.height = cssHeight * dpr;
+
+        ctx.scale(dpr, dpr);
+
+        const imgW = img.width;
+        const imgH = img.height;
+
+        const imgRatio = imgW / imgH;
+        const canvasRatio = cssWidth / cssHeight;
+
+        let drawW, drawH, offsetX, offsetY;
+
+        if (imgRatio > canvasRatio) {
+          // Image is wider relative to its height than the canvas. Fit by canvas width.
+          drawW = cssWidth;
+          drawH = cssWidth / imgRatio;
+          offsetX = 0;
+          offsetY = (cssHeight - drawH) / 2;
+        } else {
+          // Image is taller relative to its width than the canvas, or same aspect ratio. Fit by canvas height.
+          drawH = cssHeight;
+          drawW = cssHeight * imgRatio;
+          offsetY = 0;
+          offsetX = (cssWidth - drawW) / 2;
+        }
+
+        // Draw the image (using CSS pixel dimensions, as context is scaled)
+        ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+        isImageProcessed = "done";
+
+        const pixelArray = ctx.getImageData(
+          offsetX * dpr,
+          offsetY * dpr,
+          drawW * dpr,
+          drawH * dpr
+        ).data;
+
+        worker.postMessage({
+          name: "Theme",
+          data: pixelArray,
+          clusters: totalThemeBtns * colorRotation,
+        });
+        DOM.themeBtns.forEach((btn) => btn.classList.add("animate-pulse"));
+
+        worker.onmessage = (e) => {
+          const { type, payload, message } = e.data;
+          
+          if (type === "error") {
+            showToast(
+              `
+              <i data-lucide="circle-x" class="w-4 h-4 stroke-red-600"></i>
+              <p>${message}</p>
+              `,
+              3000
+            );
+          } else if (type === "result") {
+            let start = 0,
+              end = 4;
+            let sliceOfColors = data.slice(start, end);
+
+            function reEvaluateColors(item, i) {
+              const content = item.querySelector(".content");
+              const rgbValue = content.children[0];
+              const hexValue = content.children[1];
+              const hslValue = content.children[2];
+              const oklchValue = content.children[3];
+              const { rgb, hex, oklch, hsl } = getColors(sliceOfColors[i]);
+
+              rgbValue.textContent = rgb;
+              hexValue.textContent = `HEX ${hex}`;
+              hslValue.textContent = hsl;
+              oklchValue.textContent = oklch;
+
+              DOM.themeBtns[i].classList.remove("animate-pulse");
+              DOM.themeBtns[i].style.background = rgb;
+
+              rgbValue.addEventListener("click", () => copyToClipboard(rgb));
+              hexValue.addEventListener("click", () => copyToClipboard(hex));
+              hslValue.addEventListener("click", () => copyToClipboard(hsl));
+              oklchValue.addEventListener("click", () =>
+                copyToClipboard(oklch)
+              );
+
+              document.body.style.background = `linear-gradient(to bottom right, white, ${rgb})`;
+            }
+
+            DOM.themePopovers.forEach((item, i) => reEvaluateColors(item, i));
+
+            DOM.refreshThemeBtn.addEventListener("click", () => {
+              if (end === data.length) {
+                (start = 0), (end = 4);
+              } else (start = end), (end += 4);
+
+              sliceOfColors = data.slice(start, end);
+
+              DOM.themePopovers.forEach((item, i) => reEvaluateColors(item, i));
+            });
+
+            hideToast();
+          }
+        };
+        worker.onmessageerror = (e) => {
+          showToast(
+            `
+                <i data-lucide="circle-x" class="w-4 h-4 stroke-red-600"></i>
+                <p>Worker crashed: ${e.message}</p>
+              `,
+            3000
+          );
+        };
+      };
+
+      img.onerror = (e) => {
+        isImageProcessed = "idle";
+        showToast(
+          `
+            <i data-lucide="circle-x" class="w-4 h-4 stroke-red-600"></i>
+            <p>Image failed to load!</p>
+            `,
+          3000
+        );
+      };
+    }
+
+    // Handle image upload
+    function readFile() {
+      const reader = new FileReader();
+
+      reader.onload = (evt) => {
+        renderImage(evt.target.result);
+      };
+      reader.onerror = (evt) => {
+        console.error("Error happened while loading the file :", evt);
+      };
+      reader.readAsDataURL(DOM.inputFile.files[0]);
+    }
+
+    DOM.inputFile.addEventListener("change", (e) => {
+      readFile();
+    });
+
+    DOM.uploadImgLabel.addEventListener("click", () => {
+      DOM.inputFile.removeEventListener("change", readFile);
+    });
+
+    DOM.inputLink.addEventListener("change", (e) => {
+      if (e.target.value !== "") renderImage(e.target.value);
+    });
+
+    DOM.canvas.addEventListener("mouseenter", () => {
+      DOM.canvas.addEventListener("mousemove", handleMouseMove);
+    });
+    DOM.canvas.addEventListener("mouseleave", () => {
+      if (imgPixeletedPreview) {
+        imgPixeletedPreview.remove();
+        imgPixeletedPreview = null;
+      }
+    });
+    DOM.canvas.addEventListener("click", (e) => {
+      DOM.canvas.removeEventListener("mousemove", handleMouseMove);
+    });
+    DOM.clearImgBtn.addEventListener("click", () => {
+      ctx.clearRect(0, 0, DOM.canvas.width, DOM.canvas.height);
+      isImageProcessed = "idle";
+    });
+    DOM.clearLinkBtn.addEventListener("click", () => {
+      DOM.inputLink.value = "";
+      isImageProcessed = "idle";
+    });
+
+    // Sample Image from pixabay
+    window.onload = () => {
+      // const SampleImage =  "https://cdn.pixabay.com/photo/2025/05/25/12/44/bird-9621424_1280.jpg"; // load this sample image
+      // renderImage(SampleImage);
+    };
+  </script>
+</html>
