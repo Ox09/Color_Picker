@@ -55,7 +55,7 @@
             <div class="block mb-0.5 text-sm font-medium text-gray-500">
               Color picker
             </div>
-            <div class="flex justify-between">
+            <div id="color-code-container" class="flex justify-between">
               <div>
                 <p>Hex</p>
                 <div
@@ -337,6 +337,7 @@
       clearImgBtn: document.getElementById("clear-img-btn"),
       clearLinkBtn: document.getElementById("clear-link-btn"),
       toastNotification: document.getElementById("toast-bottom-right"),
+      colorCodeContainer: document.getElementById("color-code-container"),
       hexColorDisplay: document.getElementById("hex-color"),
       rColorDisplay: document.getElementById("r-color"),
       gColorDisplay: document.getElementById("g-color"),
@@ -349,6 +350,7 @@
     };
     const ctx = DOM.canvas.getContext("2d");
     let imgPixeletedPreview = null;
+    let hexColor, rgbColor;
     let isImageProcessed = "idle"; // "idle" | "done"
     let timerID = null;
 
@@ -632,7 +634,7 @@
 
         worker.onmessage = (e) => {
           const { type, payload, message } = e.data;
-          
+
           if (type === "error") {
             showToast(
               `
@@ -644,7 +646,7 @@
           } else if (type === "result") {
             let start = 0,
               end = 4;
-            let sliceOfColors = data.slice(start, end);
+            let sliceOfColors = payload.slice(start, end);
 
             function reEvaluateColors(item, i) {
               const content = item.querySelector(".content");
@@ -675,11 +677,11 @@
             DOM.themePopovers.forEach((item, i) => reEvaluateColors(item, i));
 
             DOM.refreshThemeBtn.addEventListener("click", () => {
-              if (end === data.length) {
+              if (end === payload.length) {
                 (start = 0), (end = 4);
               } else (start = end), (end += 4);
 
-              sliceOfColors = data.slice(start, end);
+              sliceOfColors = payload.slice(start, end);
 
               DOM.themePopovers.forEach((item, i) => reEvaluateColors(item, i));
             });
@@ -746,6 +748,10 @@
     });
     DOM.canvas.addEventListener("click", (e) => {
       DOM.canvas.removeEventListener("mousemove", handleMouseMove);
+      if (imgPixeletedPreview) {
+        imgPixeletedPreview.remove();
+        imgPixeletedPreview = null;
+      }
     });
     DOM.clearImgBtn.addEventListener("click", () => {
       ctx.clearRect(0, 0, DOM.canvas.width, DOM.canvas.height);
@@ -754,6 +760,13 @@
     DOM.clearLinkBtn.addEventListener("click", () => {
       DOM.inputLink.value = "";
       isImageProcessed = "idle";
+    });
+    DOM.colorCodeContainer.addEventListener("click", (e) => {
+      const id = e.target.id;
+
+      if (id === "hex-color") copyToClipboard(hexColor);
+      else if (id === "r-color" || id === "g-color" || id === "b-color")
+        copyToClipboard(rgbColor);
     });
 
     // Sample Image from pixabay
